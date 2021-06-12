@@ -55,10 +55,16 @@ class adminUser extends Controller
     }
 
     function verifyUser(Request $req){
+        $req->validate([
+            "uname" => "required|email",
+            "psw" => "required|min:5", 
+        ]);
         $adminUser = admin_user::where("email", $req->uname)->first();
         if($adminUser && $req->psw == $adminUser->password){
             $req->session()->put("user_id", $adminUser->id);
             return redirect("/getUsers");
+        }else{
+            return view("login")->with("error", "invalid credentials");
         }
     }
 
